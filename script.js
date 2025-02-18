@@ -10,6 +10,23 @@ function calculate(n1, operator, n2) {
   let result = 0;
   // TODO : n1과 n2를 operator에 따라 계산하는 함수를 만드세요.
   // ex) 입력값이 n1 : '1', operator : '+', n2 : '2' 인 경우, 3이 리턴됩니다.
+  switch (operator) {
+    case '+':
+      result = Number(n1) + Number(n2);
+      break;
+    case '-':
+      result = Number(n1) - Number(n2);
+      break;
+    case '*':
+      result = Number(n1) * Number(n2);
+      break;
+    case '/':
+      result = Number(n1) / Number(n2);
+      break;
+    default:
+      break;
+  }
+
   return String(result);
 }
 
@@ -27,27 +44,52 @@ buttons.addEventListener('click', function (event) {
     if (action === 'number') {
       // 그리고 버튼의 클레스가 number이면
       // 아래 코드가 작동됩니다.
-      console.log('숫자 ' + buttonContent + ' 버튼');
+
+      // 첫 번째 칸에 입력된 내용이 있는지, 없는지 구분해야 합니다.
+      // 첫 번째 칸에 입력된 내용이 0(기본값)이 아니라면, 이미 숫자가 입력된 상태로 볼 수 있습니다.
+      // 첫 번째 숫자가 0이 아닌 경우, 버튼을 클릭하면 두 번째 칸에 버튼에 적혀있는 숫자를 입력합니다.
+
+      if (firstOperend.textContent === '0') {
+        // 첫 번째 칸에 입력된 내용이 없을 때
+        firstOperend.textContent = buttonContent;
+      } else {
+        // 첫 번째 칸에 입력된 내용이 있을 때
+        secondOperend.textContent = buttonContent;
+      }
     }
 
     if (action === 'operator') {
-      console.log('연산자 ' + buttonContent + ' 버튼');
+      // 첫 번째 숫자, 연산자, 두 번째 숫자를 확정해야 합니다.
+      // 위 세 가지를 함수 calculate에 전달하고, 돌려받은 결과값이 마지막 칸에 입력되어야 합니다.
+
+      operator.textContent = buttonContent;
     }
 
     if (action === 'decimal') {
-      // console.log('소수점 버튼');
     }
 
     if (action === 'clear') {
       console.log('초기화 버튼');
+
+      firstOperend.textContent = '0';
+      secondOperend.textContent = '0';
+      operator.textContent = '+';
+      calculatedResult.textContent = '0';
     }
 
     if (action === 'calculate') {
-      console.log('계산 버튼');
+      // 첫번째 값과 연산자, 두번째 값이 있는 상태에서
+      // 'Enter'를 눌렀을 때 동작해야 함.
+      // 사칙연산을 계산하는 기능이 있어야 함.
+      // calculatedResult의 값을 변경해야 함.
+      calculatedResult.textContent = calculate(
+        firstOperend.textContent,
+        operator.textContent,
+        secondOperend.textContent
+      );
     }
   }
 });
-
 
 // ! Advanced Challenge test와 Nightmare test를 위해서는 아래 주석을 해제하세요.
 
@@ -64,11 +106,39 @@ buttons.addEventListener('click', function (event) {
 
   // ! 여기서부터 Advanced Challenge & Nightmare 과제룰 풀어주세요.
   if (target.matches('button')) {
-    if (action === 'number') {}
-    if (action === 'operator') {}
-    if (action === 'decimal') {}
-    if (action === 'clear') {}
-    if (action === 'calculate') {}
+    if (action === 'number') {
+      if (previousKey === 'operator') {
+        display.textContent = buttonContent;
+        previousKey = 'number';
+      } else {
+        if (display.textContent === '0') {
+          display.textContent = buttonContent;
+        } else {
+          display.textContent = display.textContent + buttonContent;
+        }
+      }
+    }
+    if (action === 'operator') {
+      operatorForAdvanced = buttonContent;
+      previousKey = 'operator';
+      firstNum = display.textContent;
+    }
+    if (action === 'decimal') {
+      console.log('decimal');
+    }
+    if (action === 'clear') {
+      display.textContent = '0';
+      firstNum = 0;
+      operatorForAdvanced = '';
+      previousKey = '';
+      previousNum = '';
+    }
+    if (action === 'calculate') {
+      display.textContent = calculate(
+        firstNum,
+        operatorForAdvanced,
+        display.textContent
+      );
+    }
   }
-
 });
